@@ -1,0 +1,11 @@
+Keybinds: {
+	StopSpectating.DisplayName: Stop Spectating
+	NextTarget.DisplayName: Next Target
+	PreviousTarget.DisplayName: Previous Target
+}
+
+RespawnText: Wait until the boss fight is over
+NotSpectating: Not Spectating
+NextTarget: Next Target
+PreviousTarget: Previous Target
+StopSpectating: Stop Spectating
