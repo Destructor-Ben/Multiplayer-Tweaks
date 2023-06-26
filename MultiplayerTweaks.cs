@@ -1,10 +1,5 @@
-using MultiplayerTweaks.Content.Networking;
-
 namespace MultiplayerTweaks;
-internal class MultiplayerTweaks : Mod
+internal class MultiplayerTweaks : TerraUtilMod
 {
-    public override void HandlePacket(BinaryReader reader, int whoAmI)
-    {
-        NetworkSystem.HandlePacket(reader, whoAmI);
-    }
+    public static MultiplayerTweaks Instance => ModContent.GetInstance<MultiplayerTweaks>();
 }

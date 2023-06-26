@@ -1,13 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
-using Terraria;
-using Terraria.Audio;
-using Terraria.GameContent;
+﻿using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
-using Terraria.ID;
-using Terraria.Localization;
-using Terraria.ModLoader;
 using Terraria.UI;
 
 namespace MultiplayerTweaks.Content.UI;
@@ -38,7 +30,7 @@ internal class UISpectate : UIState
         Append(panel);
 
         // Target info
-        targetName = new UIText(Language.GetTextValue("Mods.MultiplayerTweaks.NotSpectating"))
+        targetName = new UIText(Util.GetText("NotSpectating"))
         {
             HAlign = 0.5f,
             VAlign = 0f
@@ -54,7 +46,7 @@ internal class UISpectate : UIState
         panel.Append(targetHead);
 
         // Previous target button
-        previousTargetButton = new UIImageButton(ModContent.Request<Texture2D>("MultiplayerTweaks/Assets/PreviousButton", AssetRequestMode.ImmediateLoad))
+        previousTargetButton = new UIImageButton(Util.GetTexture("PreviousButton", false))
         {
             HAlign = 0f,
             VAlign = 0.5f
@@ -67,7 +59,7 @@ internal class UISpectate : UIState
         panel.Append(previousTargetButton);
 
         // Next target button
-        nextTargetButton = new UIImageButton(ModContent.Request<Texture2D>("MultiplayerTweaks/Assets/NextButton", AssetRequestMode.ImmediateLoad))
+        nextTargetButton = new UIImageButton(Util.GetTexture("NextButton", false))
         {
             HAlign = 1f,
             VAlign = 0.5f
@@ -80,7 +72,7 @@ internal class UISpectate : UIState
         panel.Append(nextTargetButton);
 
         // Stop spectating button
-        stopSpectatingButton = new UIImageButton(ModContent.Request<Texture2D>("MultiplayerTweaks/Assets/StopButton", AssetRequestMode.ImmediateLoad))
+        stopSpectatingButton = new UIImageButton(Util.GetTexture("StopButton", false))
         {
             HAlign = 0.5f,
             VAlign = 1f
@@ -105,11 +97,11 @@ internal class UISpectate : UIState
 
         // Tooltips
         if (previousTargetButton.IsMouseHovering)
-            Main.instance.MouseText(Language.GetTextValue("Mods.MultiplayerTweaks.PreviousTarget"));
+            Main.instance.MouseText(Util.GetTextValue("PreviousTarget"));
         if (nextTargetButton.IsMouseHovering)
-            Main.instance.MouseText(Language.GetTextValue("Mods.MultiplayerTweaks.NextTarget"));
+            Main.instance.MouseText(Util.GetTextValue("NextTarget"));
         if (stopSpectatingButton.IsMouseHovering)
-            Main.instance.MouseText(Language.GetTextValue("Mods.MultiplayerTweaks.StopSpectating"));
+            Main.instance.MouseText(Util.GetTextValue("StopSpectating"));
 
         base.Draw(spriteBatch);
 
@@ -128,7 +120,7 @@ internal class UISpectate : UIState
         // Self
         if (MultiplayerSystem.Target == null)
         {
-            name = Language.GetTextValue("Mods.MultiplayerTweaks.NotSpectating");
+            name = Util.GetTextValue("NotSpectating");
             headTexture = TextureAssets.NpcHead[0];
         }
         // Player

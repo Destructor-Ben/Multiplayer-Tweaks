@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework.Input;
 using MonoMod.Cil;
+using MultiplayerTweaks.Content.Networking;
 using MultiplayerTweaks.Content.UI;
 using ReLogic.Graphics;
 using Terraria.Map;
@@ -9,12 +10,11 @@ namespace MultiplayerTweaks.Content;
 internal class MultiplayerSystem : ModSystem
 {
     public static MultiplayerSystem Instance => ModContent.GetInstance<MultiplayerSystem>();
-    public static bool IsMultiplayer => Main.netMode == NetmodeID.MultiplayerClient;
 
     public static bool MultiplayerChests => Config.Instance.MultiplayerChests;
-    public static bool NoBossCheese => IsMultiplayer && Config.Instance.NoBossCheese && Main.CurrentFrameFlags.AnyActiveBossNPC;
+    public static bool NoBossCheese => Util.IsMultiplayer && Config.Instance.NoBossCheese && Main.CurrentFrameFlags.AnyActiveBossNPC;
 
-    public static bool IsSpectating => Target != null || cameraAnimationAmount != 1f;
+    public static bool IsSpectating => Target != null && cameraAnimationAmount != 1f;
     public static Entity Target
     {
         get => _target;
@@ -33,6 +33,7 @@ internal class MultiplayerSystem : ModSystem
     public static ModKeybind NextTargetKey;
     public static ModKeybind PreviousTargetKey;
 
+    // TODO: move animations to util
     private static float respawnMenuAnimationSpeed = 0.03f;
     private static float respawnMenuAnimationAmount = 0f;
 
@@ -60,7 +61,7 @@ internal class MultiplayerSystem : ModSystem
                 c.GotoNext(MoveType.After, i => i.MatchLdcI4(800));
                 c.EmitDelegate(delegate (int originalDistance)
                 {
-                    return IsMultiplayer && Config.Instance.GlobalTeamInfoAccs ? int.MaxValue : originalDistance;
+                    return Util.IsMultiplayer && Config.Instance.GlobalTeamInfoAccs ? int.MaxValue : originalDistance;
                 });
             }
             catch (Exception e)
@@ -101,7 +102,7 @@ internal class MultiplayerSystem : ModSystem
                 c.GotoNext(MoveType.Before, i => i.MatchStloc(3));
                 c.EmitDelegate(delegate (string originalValue)
                 {
-                    return NoBossCheese ? Language.GetTextValue("Mods.MultiplayerTweaks.RespawnText") : originalValue;
+                    return NoBossCheese ? Util.GetTextValue("RespawnText") : originalValue;
                 });
 
                 // Fixing the centering, since the wrong font is used to check the size (MouseText instead of DeathText)
@@ -134,14 +135,14 @@ internal class MultiplayerSystem : ModSystem
                 return false;
 
             bool changedMap = orig(self, x, y, light);
-            if (changedMap && IsMultiplayer)
+            if (changedMap && Util.IsMultiplayer)
             {
                 new SyncMapTilePacket
                 {
                     x = x,
                     y = y,
                     light = light,
-                }.SendToAllPlayers();
+                }.SendToAll(false);
             }
 
             return changedMap;
@@ -217,7 +218,7 @@ internal class MultiplayerSystem : ModSystem
 
     public static bool CanSpectate()
     {
-        return IsMultiplayer && Config.Instance.TeamSpectate switch
+        return Util.IsMultiplayer && Config.Instance.TeamSpectate switch
         {
             Config.TeamSpectateMode.Disabled => false,
             Config.TeamSpectateMode.BossFightDeath => Main.LocalPlayer.dead && Main.CurrentFrameFlags.AnyActiveBossNPC,
@@ -281,6 +282,7 @@ internal class MultiplayerSystem : ModSystem
     }
 
     // Math functions
+    // TODO: move these to util
     public static float Smoothstep(float x, float edge0 = 0f, float edge1 = 1f)
     {
         x = MathHelper.Clamp((x - edge0) / (edge1 - edge0), edge0, edge1);

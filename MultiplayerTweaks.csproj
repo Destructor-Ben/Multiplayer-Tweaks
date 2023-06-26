@@ -1,8 +1,3 @@
 <Project>
   <Import Project="..\TerraUtil\Mod.targets" />
-
-  <PropertyGroup>
-    <AssemblyName>MultiplayerTweaks</AssemblyName>
-    <IncludeTerraUtil>true</IncludeTerraUtil>
-  </PropertyGroup>
 </Project>

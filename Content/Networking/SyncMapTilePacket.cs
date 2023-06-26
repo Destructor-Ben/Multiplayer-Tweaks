@@ -1,7 +1,5 @@
-﻿using System;
-using System.IO;
-using Terraria;
-using Terraria.Map;
+﻿using Terraria.Map;
+using TerraUtil.Networking;
 
 namespace MultiplayerTweaks.Content.Networking;
 internal class SyncMapTilePacket : Packet
@@ -10,27 +8,27 @@ internal class SyncMapTilePacket : Packet
     public int y;
     public byte light;
 
-    public override void ReadData(BinaryReader reader)
+    public override void Handle(int? fromWho)
     {
-        x = reader.ReadInt32();
-        y = reader.ReadInt32();
-        light = reader.ReadByte();
+        if (Main.Map[x, y].Light < light)
+            UpdateMapLighting(x, y, light);
     }
 
-    public override void WriteData(BinaryWriter writer)
+    public override void Serialize(BinaryWriter writer)
     {
         writer.Write(x);
         writer.Write(y);
         writer.Write(light);
     }
 
-    public override void Recieve(int? fromWho)
+    public override void Deserialize(BinaryReader reader)
     {
-        if (Main.Map[x, y].Light < light)
-            UpdateMapLighting(x, y, light);
+        x = reader.ReadInt32();
+        y = reader.ReadInt32();
+        light = reader.ReadByte();
     }
 
-    private void UpdateMapLighting(int x, int y, byte light)
+    private static void UpdateMapLighting(int x, int y, byte light)
     {
         var other = Main.Map[x, y];
         if (light == 0 && other.Light == 0)

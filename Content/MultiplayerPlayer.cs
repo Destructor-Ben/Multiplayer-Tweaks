@@ -6,7 +6,7 @@ internal class MultiplayerPlayer : ModPlayer
     public override void OnEnterWorld()
     {
         // Auto team
-        if (MultiplayerSystem.IsMultiplayer && Config.Instance.AutoTeam != Config.AutoTeamMode.None && IsMyPlayer && Player.team == 0)
+        if (Util.IsMultiplayer && Config.Instance.AutoTeam != Config.AutoTeamMode.None && IsMyPlayer && Player.team == 0)
         {
             Player.team = (int)Config.Instance.AutoTeam;
             NetMessage.SendData(MessageID.PlayerTeam, number: Main.myPlayer);
@@ -23,12 +23,9 @@ internal class MultiplayerPlayer : ModPlayer
     public override void PostUpdate()
     {
         // Syncing the world while spectating
-        if (IsMyPlayer && MultiplayerSystem.IsMultiplayer && Main.GameUpdateCount % 10 == 0)
+        if (IsMyPlayer && Util.IsMultiplayer && Main.GameUpdateCount % 10 == 0)
         {
-            var packet = Mod.GetPacket();
-            packet.Write(0);
-            packet.WriteVector2(Main.screenPosition);
-            packet.Send();
+            // TODO: sync the world
         }
     }
 }
