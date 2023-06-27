@@ -142,7 +142,7 @@ internal class MultiplayerSystem : ModSystem
                     x = x,
                     y = y,
                     light = light,
-                }.SendToAll(false);
+                }.SendToAll();
             }
 
             return changedMap;
