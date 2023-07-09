@@ -8,10 +8,15 @@ internal class SyncMapTilePacket : Packet
     public int y;
     public byte light;
 
+    public override void OnSend(int? toWho)
+    {
+        Mod.Logger.Debug("Sending SyncMapTile packet to " + toWho.ToString() ?? "server");
+    }
+
     public override void Handle(int? fromWho)
     {
-        if (Main.Map[x, y].Light < light)
-            UpdateMapLighting(x, y, light);
+        Mod.Logger.Debug("Recieved SyncMapTile packet from " + fromWho.ToString() ?? "server");
+        UpdateMapLighting(x, y, light);
     }
 
     public override void Serialize(BinaryWriter writer)
@@ -39,6 +44,7 @@ internal class SyncMapTilePacket : Packet
             return;
 
         Main.Map.SetTile(x, y, ref mapTile);
+        Main.refreshMap = true;
         return;
     }
 }

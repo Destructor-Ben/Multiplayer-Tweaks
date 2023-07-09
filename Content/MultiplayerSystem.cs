@@ -9,6 +9,7 @@ using Terraria.UI;
 namespace MultiplayerTweaks.Content;
 internal class MultiplayerSystem : ModSystem
 {
+    // TODO: add spectating during boss fights
     public static MultiplayerSystem Instance => ModContent.GetInstance<MultiplayerSystem>();
 
     public static bool MultiplayerChests => Config.Instance.MultiplayerChests;
@@ -22,7 +23,7 @@ internal class MultiplayerSystem : ModSystem
         {
             oldCameraPos = Target != null ? Target.Center - Main.ScreenSize.ToVector2() / 2f : Main.screenPosition;
             _target = value;
-            UISystem.SpectateUIState.UpdateTargetInfo();
+            UISpectate.Instance.UpdateTargetInfo();
             if (cameraAnimationAmount == 1f)
                 cameraAnimationAmount = 0f;
         }
@@ -142,7 +143,7 @@ internal class MultiplayerSystem : ModSystem
                     x = x,
                     y = y,
                     light = light,
-                }.SendToAll();
+                }.SendToAllClients();
             }
 
             return changedMap;

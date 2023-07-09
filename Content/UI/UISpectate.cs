@@ -1,10 +1,18 @@
 ﻿using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
+using TerraUtil.UI;
 
 namespace MultiplayerTweaks.Content.UI;
-internal class UISpectate : UIState
+internal class UISpectate : Interface
 {
+    public static UISpectate Instance => ModContent.GetInstance<UISpectate>();
+
+    public override int GetLayerInsertIndex(List<GameInterfaceLayer> layers)
+    {
+        return layers.FindIndex(l => l.Name == "Vanilla: Inventory") + 1;
+    }
+
     private UIPanel panel;
     private UIText targetName;
     private UIImage targetHead;
@@ -15,8 +23,10 @@ internal class UISpectate : UIState
 
     private Player playerTarget = null;
 
-    public override void OnInitialize()
+    protected override void CreateUI()
     {
+        Visible = false;
+
         // Panel
         // TODO improve positioning of all elements
         panel = new UIPanel
@@ -85,15 +95,18 @@ internal class UISpectate : UIState
         panel.Append(stopSpectatingButton);
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public override void SafeUpdate(GameTime gameTime)
+    {
+        // TODO fancy transition animation
+        Visible = MultiplayerSystem.CanSpectate();
+    }
+
+    // TODO: move this to update
+    protected override void DrawSelf(SpriteBatch spriteBatch)
     {
         // Reset target ingo on world join
         if (targetName.Text is "" or "Mods.MultiplayerTweaks.NotSpectating")
             UpdateTargetInfo();
-
-        // TODO fancy transition animation
-        if (!MultiplayerSystem.CanSpectate())
-            return;
 
         // Tooltips
         if (previousTargetButton.IsMouseHovering)
@@ -102,8 +115,6 @@ internal class UISpectate : UIState
             Main.instance.MouseText(Util.GetTextValue("NextTarget"));
         if (stopSpectatingButton.IsMouseHovering)
             Main.instance.MouseText(Util.GetTextValue("StopSpectating"));
-
-        base.Draw(spriteBatch);
 
         // TODO - improve player head drawing
         if (playerTarget != null)
