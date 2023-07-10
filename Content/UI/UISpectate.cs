@@ -116,7 +116,7 @@ internal class UISpectate : Interface
         if (stopSpectatingButton.IsMouseHovering)
             Main.instance.MouseText(Util.GetTextValue("StopSpectating"));
 
-        // TODO - improve player head drawing
+        // TODO: improve player head drawing
         if (playerTarget != null)
             Main.PlayerRenderer.DrawPlayerHead(Main.Camera, playerTarget, targetHead.GetDimensions().Center(), scale: 1.5f);
     }

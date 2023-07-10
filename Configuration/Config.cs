@@ -38,7 +38,7 @@ public class Config : ModConfig
     [DefaultValue(true)]
     public bool TeamPersonalStorages;
 
-    // TODO - Voice chat
+    // TODO: Voice chat
 
     public enum AutoTeamMode
     {
