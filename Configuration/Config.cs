@@ -1,7 +1,7 @@
+#pragma warning disable CS0649
 using System.ComponentModel;
 using Terraria.ModLoader.Config;
 
-#pragma warning disable CS0649
 namespace MultiplayerTweaks.Configuration;
 public class Config : ModConfig
 {
@@ -65,4 +65,3 @@ public class Config : ModConfig
         Always,
     }
 }
-#pragma warning restore CS0649
