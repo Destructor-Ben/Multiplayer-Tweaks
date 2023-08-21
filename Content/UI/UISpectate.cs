@@ -40,7 +40,7 @@ internal class UISpectate : Interface
         Append(panel);
 
         // Target info
-        targetName = new UIText(Util.GetText("NotSpectating"))
+        targetName = new UIText(Util.GetText("UI.NotSpectating"))
         {
             HAlign = 0.5f,
             VAlign = 0f
@@ -56,7 +56,7 @@ internal class UISpectate : Interface
         panel.Append(targetHead);
 
         // Previous target button
-        previousTargetButton = new UIImageButton(Util.GetTexture("PreviousButton", false))
+        previousTargetButton = new UIImageButton(Util.GetTexture("UI.PreviousButton", false))
         {
             HAlign = 0f,
             VAlign = 0.5f
@@ -69,7 +69,7 @@ internal class UISpectate : Interface
         panel.Append(previousTargetButton);
 
         // Next target button
-        nextTargetButton = new UIImageButton(Util.GetTexture("NextButton", false))
+        nextTargetButton = new UIImageButton(Util.GetTexture("UI.NextButton", false))
         {
             HAlign = 1f,
             VAlign = 0.5f
@@ -82,7 +82,7 @@ internal class UISpectate : Interface
         panel.Append(nextTargetButton);
 
         // Stop spectating button
-        stopSpectatingButton = new UIImageButton(Util.GetTexture("StopButton", false))
+        stopSpectatingButton = new UIImageButton(Util.GetTexture("UI.StopButton", false))
         {
             HAlign = 0.5f,
             VAlign = 1f
@@ -97,24 +97,22 @@ internal class UISpectate : Interface
 
     public override void SafeUpdate(GameTime gameTime)
     {
-        // TODO fancy transition animation
-        Visible = MultiplayerSystem.CanSpectate();
     }
 
     // TODO: move this to update
     protected override void DrawSelf(SpriteBatch spriteBatch)
     {
-        // Reset target ingo on world join
-        if (targetName.Text is "" or "Mods.MultiplayerTweaks.NotSpectating")
+        // Reset target info on world join
+        if (targetName.Text is "" or "UI.NotSpectating")
             UpdateTargetInfo();
 
         // Tooltips
         if (previousTargetButton.IsMouseHovering)
-            Main.instance.MouseText(Util.GetTextValue("PreviousTarget"));
+            Main.instance.MouseText(Util.GetTextValue("UI.PreviousTarget"));
         if (nextTargetButton.IsMouseHovering)
-            Main.instance.MouseText(Util.GetTextValue("NextTarget"));
+            Main.instance.MouseText(Util.GetTextValue("UI.NextTarget"));
         if (stopSpectatingButton.IsMouseHovering)
-            Main.instance.MouseText(Util.GetTextValue("StopSpectating"));
+            Main.instance.MouseText(Util.GetTextValue("UI.StopSpectating"));
 
         // TODO: improve player head drawing
         if (playerTarget != null)
@@ -131,7 +129,7 @@ internal class UISpectate : Interface
         // Self
         if (MultiplayerSystem.Target == null)
         {
-            name = Util.GetTextValue("NotSpectating");
+            name = Util.GetTextValue("UI.NotSpectating");
             headTexture = TextureAssets.NpcHead[0];
         }
         // Player

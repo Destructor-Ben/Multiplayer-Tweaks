@@ -10,22 +10,29 @@ namespace MultiplayerTweaks.Content;
 internal class MultiplayerSystem : ModSystem
 {
     // TODO: add spectating during boss fights
+    // TODO: refactor
     public static MultiplayerSystem Instance => ModContent.GetInstance<MultiplayerSystem>();
 
     public static bool MultiplayerChests => Config.Instance.MultiplayerChests;
-    public static bool NoBossCheese => Util.IsMultiplayer && Config.Instance.NoBossCheese && Main.CurrentFrameFlags.AnyActiveBossNPC;
+    public static bool NoBossCheese => /*Util.IsMultiplayer && */Config.Instance.NoBossCheese && Main.CurrentFrameFlags.AnyActiveBossNPC;
 
-    public static bool IsSpectating => Target != null && cameraAnimationAmount != 1f;
+    public static bool IsSpectating => Target != null;
+    public static bool CanSpectate => /*Util.IsMultiplayer &&*/ Config.Instance.TeamSpectate switch// TODO: temporary
+    {
+        Config.TeamSpectateMode.Disabled => false,
+        Config.TeamSpectateMode.BossFightDeath => Main.LocalPlayer.dead && Main.CurrentFrameFlags.AnyActiveBossNPC,
+        Config.TeamSpectateMode.Death => Main.LocalPlayer.dead,
+        Config.TeamSpectateMode.Always => true,
+        _ => true
+    };
+
     public static Entity Target
     {
         get => _target;
         set
         {
-            oldCameraPos = Target != null ? Target.Center - Main.ScreenSize.ToVector2() / 2f : Main.screenPosition;
             _target = value;
             UISpectate.Instance.UpdateTargetInfo();
-            if (cameraAnimationAmount == 1f)
-                cameraAnimationAmount = 0f;
         }
     }
     private static Entity _target = null;
@@ -38,14 +45,10 @@ internal class MultiplayerSystem : ModSystem
     private static float respawnMenuAnimationSpeed = 0.03f;
     private static float respawnMenuAnimationAmount = 0f;
 
-    private static Vector2 oldCameraPos;
-    private static float cameraAnimationAmount = 0f;
-    private static float cameraAnimationSpeed = 0.03f;
-
     public override void Load()
     {
         // Hotkeys
-        if (!Main.dedServ)
+        if (!Util.IsHeadless)
         {
             StopSpectatingKey = KeybindLoader.RegisterKeybind(Mod, "StopSpectating", Keys.RightAlt);
             NextTargetKey = KeybindLoader.RegisterKeybind(Mod, "NextTarget", Keys.OemPeriod);
@@ -103,7 +106,7 @@ internal class MultiplayerSystem : ModSystem
                 c.GotoNext(MoveType.Before, i => i.MatchStloc(3));
                 c.EmitDelegate(delegate (string originalValue)
                 {
-                    return NoBossCheese ? Util.GetTextValue("RespawnText") : originalValue;
+                    return NoBossCheese ? Util.GetTextValue("UI.RespawnText") : originalValue;
                 });
 
                 // Fixing the centering, since the wrong font is used to check the size (MouseText instead of DeathText)
@@ -130,6 +133,7 @@ internal class MultiplayerSystem : ModSystem
 
         // Stopping map from being revealed if spectating
         // Syncing world map with other players
+        // TODO: finish map syncing
         On_WorldMap.UpdateLighting += delegate (On_WorldMap.orig_UpdateLighting orig, WorldMap self, int x, int y, byte light)
         {
             if (IsSpectating)
@@ -165,19 +169,14 @@ internal class MultiplayerSystem : ModSystem
         respawnMenuAnimationAmount += direction * respawnMenuAnimationSpeed;
         respawnMenuAnimationAmount = MathHelper.Clamp(respawnMenuAnimationAmount, 0f, 1f);
 
-        // Camera
-        cameraAnimationAmount = MathHelper.Clamp(cameraAnimationAmount + 0.03f, 0f, 1f);
+        // TODO: temporary
+        // TODO fancy transition animation
+        UISpectate.Instance.Visible = CanSpectate;
     }
 
     public static float GetCustomRespawnMenuHeight(float originalValue)
     {
-        return MathHelper.Lerp(-Main.screenHeight / 2 + 100, originalValue, Smootherstep(respawnMenuAnimationAmount));
-    }
-
-    public static Vector2 GetCameraPosition(Vector2 newValue)
-    {
-        return Vector2.Lerp(oldCameraPos, newValue, Smootherstep(cameraAnimationAmount + cameraAnimationSpeed * 0));
-        //return Vector2.Lerp(oldCameraPos, newValue, cameraAnimationSpeed);
+        return MathHelper.Lerp(-Main.screenHeight / 2 + 100, originalValue, Util.Smootherstep(respawnMenuAnimationAmount));
     }
 
     // Team spectate
@@ -191,7 +190,7 @@ internal class MultiplayerSystem : ModSystem
         ChangeTarget(-1);
     }
 
-    public static void ChangeTarget(int change)
+    public static void ChangeTarget(int changeAmount)
     {
         bool dontChangeTarget = false;
 
@@ -213,20 +212,8 @@ internal class MultiplayerSystem : ModSystem
         }
 
         // Changing the target
-        int newIndex = Math.Clamp(index + change, 0, targets.Count - 1);
+        int newIndex = Math.Clamp(index + changeAmount, 0, targets.Count - 1);
         Target = targets[newIndex];
-    }
-
-    public static bool CanSpectate()
-    {
-        return Util.IsMultiplayer && Config.Instance.TeamSpectate switch
-        {
-            Config.TeamSpectateMode.Disabled => false,
-            Config.TeamSpectateMode.BossFightDeath => Main.LocalPlayer.dead && Main.CurrentFrameFlags.AnyActiveBossNPC,
-            Config.TeamSpectateMode.Death => Main.LocalPlayer.dead,
-            Config.TeamSpectateMode.Always => true,
-            _ => true
-        };
     }
 
     public static List<Entity> GetPossibleSpectatorTargets()
@@ -258,7 +245,7 @@ internal class MultiplayerSystem : ModSystem
 
     public override void ModifyScreenPosition()
     {
-        if (!CanSpectate())
+        if (!CanSpectate)
             Target = null;
 
         // Spectating hotkeys
@@ -272,40 +259,12 @@ internal class MultiplayerSystem : ModSystem
             PreviousTarget();
 
         // Checking if the target died or left
-        if (!Target?.active ?? false)
+        if (!(Target?.active ?? false))
             Target = null;
 
         // Moving the screen
         // TODO fancy transtion animation
-        var newCameraPosition = Target != null ? Target.Center - Main.ScreenSize.ToVector2() / 2 : Main.screenPosition;
-        Main.screenPosition = GetCameraPosition(newCameraPosition);
-        //oldCameraPos = Main.screenPosition;
-    }
-
-    // Math functions
-    // TODO: move these to util
-    public static float Smoothstep(float x, float edge0 = 0f, float edge1 = 1f)
-    {
-        x = MathHelper.Clamp((x - edge0) / (edge1 - edge0), edge0, edge1);
-        return x * x * (3f - 2f * x);
-    }
-
-    public static float Smootherstep(float x, float edge0 = 0f, float edge1 = 1f)
-    {
-        x = MathHelper.Clamp((x - edge0) / (edge1 - edge0), edge0, edge1);
-        return x * x * x * (x * (x * 6f - 15f) + 10f);
-    }
-
-    public static float EaseIn(float x, float edge0 = 0f, float edge1 = 1f)
-    {
-        x = MathHelper.Clamp((x - edge0) / (edge1 - edge0), edge0, edge1);
-        return 2 * x * x;
-    }
-
-    public static float EaseOut(float x, float edge0 = 0f, float edge1 = 1f)
-    {
-        x = MathHelper.Clamp((x - edge0) / (edge1 - edge0), edge0, edge1);
-        x -= 0.5f;
-        return 2 * x * (edge1 - x) + 0.5f;
+        if (Target != null)
+            Main.screenPosition = Target.Center - Util.ScreenSize / 2;
     }
 }

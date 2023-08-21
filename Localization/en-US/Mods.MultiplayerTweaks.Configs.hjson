@@ -68,3 +68,28 @@ Config: {
 		Always: Always
 	}
 }
+
+AutoTeamMode: {
+	Tooltip: ""
+	None.Label: None
+	Red.Label: Red
+	Green.Label: Green
+	Blue.Label: Blue
+	Yellow.Label: Yellow
+	Pink.Label: Pink
+}
+
+SharedMapMode: {
+	Tooltip: ""
+	Disabled.Label: Disabled
+	Team.Label: Team
+	Global.Label: Global
+}
+
+TeamSpectateMode: {
+	Tooltip: ""
+	Disabled.Label: Disabled
+	BossFightDeath.Label: Boss Fight Death
+	Death.Label: Death
+	Always.Label: Always
+}
