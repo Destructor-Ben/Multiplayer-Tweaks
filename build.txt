@@ -1,9 +1,11 @@
 displayName = Multiplayer Tweaks
 author = Destructor_Ben
-version = 1.0.0.0
 homepage = https://github.com/Destructor-Ben/Multiplayer-Tweaks
+
+version = 1.0.0.0
+side = Both
+dllReferences = TerraUtil
+
 hideCode = false
 hideResources = false
 includeSource = false
-side = Both
-dllReferences = TerraUtil
