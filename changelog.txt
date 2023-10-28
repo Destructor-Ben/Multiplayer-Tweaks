@@ -1,1 +1,4 @@
-<Insert/>
+[b]v{ModVersion} - {tMLBuildPurpose} tModLoader v{tMLVersion}[/b]
+[list]
+[*]
+[/list]
