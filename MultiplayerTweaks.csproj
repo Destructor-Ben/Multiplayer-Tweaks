@@ -1,3 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\TerraUtil\Mod.targets" />
+
+  <PropertyGroup>
+    <TerraUtilUsingCore>false</TerraUtilUsingCore>
+  </PropertyGroup>
 </Project>
