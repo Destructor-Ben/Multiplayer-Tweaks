@@ -45,28 +45,6 @@ Config: {
 		Label: "[i:PiggyBank] Team Storages"
 		Tooltip: Allows players of the same team to access each others personal storages
 	}
-
-	AutoTeamMode: {
-		None: None
-		Red: Red
-		Green: Green
-		Blue: Blue
-		Yellow: Yellow
-		Pink: Pink
-	}
-
-	SharedMapMode: {
-		Disabled: Disabled
-		Team: Share With Team
-		Global: Share With Everyone
-	}
-
-	TeamSpectateMode: {
-		Disabled: Disabled
-		BossFightDeath: Only While Dead During Boss Fights
-		Death: Only While Dead
-		Always: Always
-	}
 }
 
 AutoTeamMode: {
@@ -82,14 +60,14 @@ AutoTeamMode: {
 SharedMapMode: {
 	Tooltip: ""
 	Disabled.Label: Disabled
-	Team.Label: Team
-	Global.Label: Global
+	Team.Label: Share With Team
+	Global.Label: Share With Everyone
 }
 
 TeamSpectateMode: {
 	Tooltip: ""
 	Disabled.Label: Disabled
-	BossFightDeath.Label: Boss Fight Death
-	Death.Label: Death
+	BossFightDeath.Label: Only While Dead During Boss Fights
+	Death.Label: Only While Dead
 	Always.Label: Always
 }
