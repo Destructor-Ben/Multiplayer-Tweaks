@@ -5,6 +5,8 @@ VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerTweaks", "MultiplayerTweaks.csproj", "{EBF7D2B8-76F4-49EB-8087-E3699C438E50}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerraUtil", "..\TerraUtil\TerraUtil.csproj", "{AF16D984-650F-4C48-B692-BA4CA5D79017}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EBF7D2B8-76F4-49EB-8087-E3699C438E50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBF7D2B8-76F4-49EB-8087-E3699C438E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBF7D2B8-76F4-49EB-8087-E3699C438E50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF16D984-650F-4C48-B692-BA4CA5D79017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF16D984-650F-4C48-B692-BA4CA5D79017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF16D984-650F-4C48-B692-BA4CA5D79017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF16D984-650F-4C48-B692-BA4CA5D79017}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
