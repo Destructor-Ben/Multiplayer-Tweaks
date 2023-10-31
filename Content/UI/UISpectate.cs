@@ -95,10 +95,6 @@ internal class UISpectate : Interface
         panel.Append(stopSpectatingButton);
     }
 
-    public override void SafeUpdate(GameTime gameTime)
-    {
-    }
-
     // TODO: move this to update
     protected override void DrawSelf(SpriteBatch spriteBatch)
     {
